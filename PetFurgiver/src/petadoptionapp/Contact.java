@@ -8,16 +8,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URI;
 import java.net.URL;
-import petadoptionapp.FontUtils;
 
+// Encapsulation - Contact class hides internal data and provides controlled access
 public class Contact {
+    // Encapsulation - private fields hide internal state from outside access
     private MainFrame mainFrame;
     private JPanel contactPanel;
     
+    // Encapsulation - constructor controls how objects are created
     public Contact(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
     }
     
+    // Abstraction - public method hides complex panel creation details
     public JPanel createPage() {
         contactPanel = new JPanel(new GridBagLayout());
         contactPanel.setOpaque(true);
@@ -32,15 +35,18 @@ public class Contact {
     }
 }
 
+// Inheritance - ContactDialog extends JDialog to reuse dialog functionality
 class ContactDialog extends JDialog {
+    // Encapsulation - private fields protect internal state
     private Image backgroundImage;
     private Image secondImage;
     private boolean showingSecondImage = false;
     private boolean showClickMeText = true;
     private JPanel contentPanel;
-    private int clickMeTextYOffset = 90; // Adjust this value to move the "Click Me!" text up/down
+    private int clickMeTextYOffset = 90;
 
     public ContactDialog(Frame owner, String contactNumber1, String contactNumber2, String contactEmail) {
+        // Inheritance - calling parent constructor to initialize dialog
         super(owner, "Contact Us", true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -61,6 +67,7 @@ class ContactDialog extends JDialog {
             e.printStackTrace();
         }
 
+        // Polymorphism - anonymous class overrides paintComponent method
         JPanel mainPanel = new JPanel(new BorderLayout()) {
         	@Override
         	protected void paintComponent(Graphics g) {
@@ -73,7 +80,6 @@ class ContactDialog extends JDialog {
         	        g2.drawImage(currentImage, 0, 0, getWidth(), getHeight(), this);
         	    }
 
-        	    // Draw "Click Me!" text at the top if it should be visible
         	    if (showClickMeText) {
         	        g2.setFont(FontUtils.Arial(34f));
         	        g2.setColor(Color.decode("#b88917"));
@@ -82,9 +88,8 @@ class ContactDialog extends JDialog {
         	        FontMetrics fm = g2.getFontMetrics();
         	        int textWidth = fm.stringWidth(clickText);
         	        int x = (getWidth() - textWidth) / 2;
-        	        int y = clickMeTextYOffset; // Use the offset variable here
+        	        int y = clickMeTextYOffset;
 
-        	        // Draw the text without any background
         	        g2.setColor(Color.decode("#b88917"));
         	        g2.drawString(clickText, x, y);
         	    }
@@ -108,16 +113,14 @@ class ContactDialog extends JDialog {
         closeButtonPanel.add(closeButton);
         mainPanel.add(closeButtonPanel, BorderLayout.NORTH);
 
+        // Polymorphism - anonymous MouseAdapter class overrides mouseClicked
         mainPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (!SwingUtilities.isDescendingFrom(e.getComponent(), closeButtonPanel)) {
-                    // Toggle the "Click Me!" text visibility based on current state
                     if (showingSecondImage) {
-                        // If we're showing contact info and user clicks, go back to envelope and show "Click Me!" again
                         showClickMeText = true;
                     } else {
-                        // If we're showing the envelope with "Click Me!" and user clicks, hide the text and show contact info
                         showClickMeText = false;
                     }
                     
@@ -151,7 +154,6 @@ class ContactDialog extends JDialog {
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        // Contact details panel
         JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
         detailsPanel.setOpaque(false);
@@ -159,7 +161,6 @@ class ContactDialog extends JDialog {
         detailsPanel.setBorder(new EmptyBorder(10, 30, 20, 30));
         detailsPanel.setMaximumSize(new Dimension(350, Integer.MAX_VALUE));
 
-        // Phone numbers
         JLabel phoneLabel = new JLabel("Phone:");
         phoneLabel.setFont(FontUtils.Arial(24f));
         phoneLabel.setForeground(Color.decode("#060644"));
@@ -175,7 +176,6 @@ class ContactDialog extends JDialog {
         number2Label.setFont(FontUtils.Arial(24f));
         number2Label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Email
         JLabel emailStaticLabel = new JLabel("Email:");
         emailStaticLabel.setFont(FontUtils.Arial(24f));
         emailStaticLabel.setForeground(Color.decode("#060644"));
@@ -188,6 +188,7 @@ class ContactDialog extends JDialog {
         emailLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Polymorphism - anonymous MouseAdapter overrides multiple methods
         emailLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -229,9 +230,8 @@ class ContactDialog extends JDialog {
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         setContentPane(mainPanel);
-        
-        // Position the dialog - you can adjust the yOffset value
-        int yOffset = 50; // Positive moves down, negative moves up
+
+        int yOffset = 50;
         setLocationRelativeTo(owner);
         Point currentLocation = getLocation();
         setLocation(currentLocation.x, currentLocation.y + yOffset);
@@ -239,29 +239,30 @@ class ContactDialog extends JDialog {
         toggleContactVisibility();
     }
 
+    // Abstraction - method hides complex button creation logic
     private JButton createCloseButton() {
         JButton closeButton = new JButton("X");
         closeButton.setFont(FontUtils.Arial(60f));
         closeButton.setForeground(Color.decode("#060644"));
-        closeButton.setBackground(new Color(255, 255, 255, 0)); // Fully transparent background
+        closeButton.setBackground(new Color(255, 255, 255, 0));
         closeButton.setFocusPainted(false);
         closeButton.setBorderPainted(false);
         closeButton.setContentAreaFilled(false);
         closeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         closeButton.setPreferredSize(new Dimension(40, 40));
 
-        // Hover effect - slight background on hover
+        // Polymorphism - anonymous MouseAdapter overrides hover methods
         closeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                closeButton.setBackground(new Color(240, 240, 240, 50)); // Very subtle hover effect
+                closeButton.setBackground(new Color(240, 240, 240, 50));
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                closeButton.setBackground(new Color(255, 255, 255, 0)); // Back to transparent
+                closeButton.setBackground(new Color(255, 255, 255, 0));
             }
         });
 
-        // Custom painting for transparent background
+        // Polymorphism - anonymous BasicButtonUI class overrides paint method
         closeButton.setUI(new BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
@@ -272,16 +273,12 @@ class ContactDialog extends JDialog {
                 int width = btn.getWidth();
                 int height = btn.getHeight();
 
-                // Only fill background if it has some opacity (for hover effect)
                 Color bg = btn.getBackground();
                 if (bg.getAlpha() > 0) {
                     g2.setColor(bg);
                     g2.fillRoundRect(0, 0, width, height, 20, 20);
                 }
 
-                // No border drawing - completely transparent outline
-
-                // Draw the X text
                 g2.setColor(btn.getForeground());
                 g2.setFont(btn.getFont());
                 FontMetrics fm = g2.getFontMetrics();
@@ -295,6 +292,8 @@ class ContactDialog extends JDialog {
 
         return closeButton;
     }
+    
+    // Encapsulation - private method controls internal visibility state
     private void toggleContactVisibility() {
         contentPanel.setVisible(showingSecondImage);
     }

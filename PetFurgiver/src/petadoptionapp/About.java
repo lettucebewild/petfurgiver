@@ -5,7 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// Encapsulation - Class bundles data and methods together, hiding internal details
 public class About {
+    // Encapsulation - Private fields hide implementation details from outside classes
     private MainFrame mainFrame;
     private Timer typingTimer;
     private JLabel textLabel;
@@ -16,26 +18,26 @@ public class About {
     private StringBuilder currentText = new StringBuilder();
     private boolean isFirstTime = true;
 
+    // Encapsulation - Constructor controls how object is initialized
     public About(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
     }
 
+    // Abstraction - Public method hides complex panel creation logic
     public JPanel createPage() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Color.WHITE);
 
-        // Create main content panel with horizontal layout
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(Color.WHITE);
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 40, 40)); // Add padding
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 40, 40));
 
-        // Left panel for image and "About Us" text
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBackground(Color.WHITE);
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(30, 20, 0, 0)); // Add left padding to move image to the right
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(30, 20, 0, 0));
 
-        // Load and add the About.png image (smaller size) - Initially hidden
+        // Polymorphism - JLabel can display different content types (image, text)
         imageLabel = new JLabel();
         try {
             ImageIcon aboutIcon = new ImageIcon(getClass().getResource("/About.png"));
@@ -43,7 +45,6 @@ public class About {
                 Image scaledImage = aboutIcon.getImage().getScaledInstance(350, 350, Image.SCALE_SMOOTH);
                 imageLabel.setIcon(new ImageIcon(scaledImage));
             } else {
-                // Fallback if image not found
                 imageLabel.setPreferredSize(new Dimension(350, 350));
                 imageLabel.setBackground(Color.LIGHT_GRAY);
                 imageLabel.setOpaque(true);
@@ -51,7 +52,6 @@ public class About {
                 imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
             }
         } catch (Exception e) {
-            // Fallback if image not found
             imageLabel.setPreferredSize(new Dimension(350, 350));
             imageLabel.setBackground(Color.LIGHT_GRAY);
             imageLabel.setOpaque(true);
@@ -60,27 +60,23 @@ public class About {
         }
 
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        imageLabel.setVisible(false); // Initially hidden
+        imageLabel.setVisible(false);
         leftPanel.add(imageLabel);
 
-        // Add some spacing between image and text
         leftPanel.add(Box.createVerticalStrut(20));
 
-        // Add "About Us" text below the image - Initially hidden
         aboutUsLabel = new JLabel("About Us");
         aboutUsLabel.setFont(FontUtils.Arial(50f));
         aboutUsLabel.setForeground(Color.decode("#060644"));
         aboutUsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         aboutUsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        aboutUsLabel.setVisible(false); // Initially hidden
+        aboutUsLabel.setVisible(false);
         leftPanel.add(aboutUsLabel);
 
-        // Right panel for the main text content
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(Color.WHITE);
-        rightPanel.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 0)); // Left margin to separate from image
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 0));
 
-        // Create text content with black color
         String aboutText = "At <font color='#060644'><em>FurGivers</em></font>, we believe every animal deserves a second chance. " +
                            "We connect kind-hearted individuals with lovable cats and dogs from our local shelter, " +
                            "helping them find warm, forever homes. " +
@@ -89,20 +85,15 @@ public class About {
                            "FurGivers is here to make the process easier, more meaningful, and filled with heart. " +
                            "<font color='#060644'>Together, we can change lives. <em>One paw at a time.</em></font>";
 
-        // Initialize the text label
         textLabel = new JLabel();
         textLabel.setVerticalAlignment(SwingConstants.TOP);
         textLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Split the text into sentences
         prepareSentencesArray(aboutText);
-        
-        // Start with empty text (don't start typing effect yet)
         updateTextDisplay();
         
         rightPanel.add(textLabel, BorderLayout.CENTER);
 
-        // Add panels to main content panel
         contentPanel.add(leftPanel, BorderLayout.WEST);
         contentPanel.add(rightPanel, BorderLayout.CENTER);
 
@@ -111,8 +102,8 @@ public class About {
         return mainPanel;
     }
 
+    // Abstraction - Hides complex text preparation logic
     private void prepareSentencesArray(String text) {
-        // Define sentences manually to have better control
         sentences = new String[]{
             "At <font color='#060644'><em>FurGivers, </em></font> we believe every animal deserves a second chance.",
             "We connect kind-hearted individuals with lovable cats and dogs from our local shelter, helping them find warm, forever homes.",
@@ -124,41 +115,35 @@ public class About {
         };
     }
 
+    // Abstraction - Public method hides complex animation sequence
     public void startTypingEffect() {
-        // Stop any running typing timer first
         if (typingTimer != null && typingTimer.isRunning()) {
             typingTimer.stop();
         }
         
-        // Reset typing-related variables
         currentSentenceIndex = 0;
         currentText = new StringBuilder();
-        textLabel.setText(""); // Clear existing text
+        textLabel.setText("");
         textLabel.repaint();
         
         if (isFirstTime) {
-            // First time: do the full sequence with image and text reveals
             isFirstTime = false;
             
-            // Stage 1: Show image first after 1.5 seconds
+            // Polymorphism - Timer objects handle different animation stages
             Timer imageRevealTimer = new Timer(1500, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Show only the image
                     imageLabel.setVisible(true);
                     imageLabel.repaint();
                     ((Timer)e.getSource()).stop();
                     
-                    // Stage 2: Show "About Us" text after another 1.5 seconds
                     Timer textRevealTimer = new Timer(1500, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            // Show the "About Us" text
                             aboutUsLabel.setVisible(true);
                             aboutUsLabel.repaint();
                             ((Timer)e.getSource()).stop();
                             
-                            // Stage 3: Start typing effect after another 1 second
                             Timer typingStartTimer = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
@@ -177,28 +162,23 @@ public class About {
             imageRevealTimer.setRepeats(false);
             imageRevealTimer.start();
         } else {
-            // Subsequent times: just restart the typing effect immediately
             startTextTyping();
         }
     }
     
-
-    
+    // Abstraction - Hides element reveal complexity
     private void revealElements() {
-        // Simple reveal by making elements visible
         imageLabel.setVisible(true);
         aboutUsLabel.setVisible(true);
         
-        // Repaint to ensure visibility
         imageLabel.repaint();
         aboutUsLabel.repaint();
         
-        // Optional: Add a subtle fade-in effect using a timer
         createFadeInEffect();
     }
     
+    // Abstraction - Encapsulates fade animation logic
     private void createFadeInEffect() {
-        // Create a simple fade-in effect by adjusting component properties
         final float[] alpha = {0.0f};
         Timer fadeTimer = new Timer(50, new ActionListener() {
             @Override
@@ -209,7 +189,6 @@ public class About {
                     ((Timer)e.getSource()).stop();
                 }
                 
-                // Apply alpha to components (this is a simplified approach)
                 imageLabel.repaint();
                 aboutUsLabel.repaint();
             }
@@ -217,22 +196,21 @@ public class About {
         fadeTimer.start();
     }
     
+    // Abstraction - Hides sentence-by-sentence typing logic
     private void startTextTyping() {
-        // Create timer for sentence-by-sentence typing
+        // Polymorphism - ActionListener interface implemented differently for typing
         typingTimer = new Timer(1000, new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (currentSentenceIndex < sentences.length) {
                     String currentSentence = sentences[currentSentenceIndex];
                     
-                    // Special handling for "One paw at a time."
                     if (currentSentence.contains("One paw at a time.")) {
-                        typingTimer.stop(); // Stop main timer
-                        startWordByWordTyping(currentSentence); // Start word-by-word for this sentence
+                        typingTimer.stop();
+                        startWordByWordTyping(currentSentence);
                         return;
                     }
                     
-                    // Add the sentence
                     if (currentText.length() > 0) {
                         currentText.append(" ");
                     }
@@ -240,7 +218,6 @@ public class About {
                     currentSentenceIndex++;
                     updateTextDisplay();
                 } else {
-                    // Stop the timer when all sentences are displayed
                     typingTimer.stop();
                 }
             }
@@ -249,8 +226,8 @@ public class About {
         typingTimer.start();
     }
     
+    // Abstraction - Hides word-by-word typing complexity
     private void startWordByWordTyping(String sentence) {
-        // Split the sentence into words while preserving HTML tags
         String[] words = sentence.split("(?<=\\s)|(?=<)|(?<=>)");
         java.util.List<String> wordList = new java.util.ArrayList<>();
         for (String word : words) {
@@ -263,15 +240,13 @@ public class About {
         final int[] wordIndex = {0};
         final StringBuilder wordText = new StringBuilder();
         
-        // Timer for word-by-word typing (faster for this special sentence)
-        Timer wordTimer = new Timer(300, new ActionListener() { // 300ms between words
+        // Polymorphism - Different Timer behavior for word-by-word typing
+        Timer wordTimer = new Timer(300, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (wordIndex[0] < cleanWords.length) {
-                    // Add the next word
                     wordText.append(cleanWords[wordIndex[0]]);
                     
-                    // Add space if needed
                     if (wordIndex[0] + 1 < cleanWords.length && 
                         !cleanWords[wordIndex[0] + 1].startsWith("<") && 
                         !cleanWords[wordIndex[0]].endsWith(">")) {
@@ -280,7 +255,6 @@ public class About {
                     
                     wordIndex[0]++;
                     
-                    // Update display with current sentence + word-by-word text
                     StringBuilder tempText = new StringBuilder(currentText);
                     if (tempText.length() > 0) {
                         tempText.append(" ");
@@ -298,10 +272,8 @@ public class About {
                     textLabel.setText(htmlText);
                     textLabel.repaint();
                 } else {
-                    // Finished word-by-word typing
                     ((Timer)e.getSource()).stop();
                     
-                    // Add the complete sentence to currentText
                     if (currentText.length() > 0) {
                         currentText.append(" ");
                     }
@@ -315,19 +287,19 @@ public class About {
         wordTimer.start();
     }
 
+    // Abstraction - Hides text formatting details
     private String formatTextWithBreaks(String text) {
-        // Add line breaks at appropriate points
         text = text.replace("guide you.", "guide you.<br><br>");
         text = text.replace("separate form.", "separate form.<br><br>");
         text = text.replace("with heart.", "with heart.<br>");
         return text;
     }
 
+    // Abstraction - Hides HTML text display complexity
     private void updateTextDisplay() {
         String currentDisplayText = currentText.toString();
         currentDisplayText = formatTextWithBreaks(currentDisplayText);
         
-        // Wrap in HTML with styling
         String htmlText = "<html><div style='text-align: left; font-family: Arial Nova Cond, Arial, sans-serif; font-size: 24px; " +
                          "line-height: 1.4; font-weight: normal; color: black;'>" +
                          currentDisplayText +
@@ -337,12 +309,10 @@ public class About {
         textLabel.repaint();
     }
 
+    // Abstraction - Public method hides timer cleanup details
     public void cleanup() {
-        // Stop all timers if they're running
         if (typingTimer != null && typingTimer.isRunning()) {
             typingTimer.stop();
         }
-        // Note: Individual timers are created as local variables and stopped individually
-        // No need to track revealTimer anymore since we use multiple local timers
     }
 }

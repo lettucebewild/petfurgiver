@@ -3,18 +3,16 @@ package petadoptionapp;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Collections;
-import java.awt.AlphaComposite;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
+// Inheritance - extends JPanel to inherit GUI functionality
 public class FindPets extends JPanel {
+    // Encapsulation - private fields hide internal data
     private JFrame ownerFrame;
     private JPanel petsGridPanel;
     private ArrayList<Pet> fullPetList;
@@ -35,7 +33,7 @@ public class FindPets extends JPanel {
         initializePetData();
     }
     
-    // Simplified custom scrollbar UI that's always visible but styled
+    // Inheritance - extends BasicScrollBarUI to customize scrollbar appearance
     private class CustomScrollBarUI extends BasicScrollBarUI {
         @Override
         protected void configureScrollBarColors() {
@@ -88,26 +86,21 @@ public class FindPets extends JPanel {
             Image bgImage = new ImageIcon(getClass().getResource(backgroundImagePath)).getImage();
             Graphics2D g2d = (Graphics2D) g;
             
-            // Get component and image dimensions
             int componentWidth = getWidth();
             int componentHeight = getHeight();
             int imageWidth = bgImage.getWidth(this);
             int imageHeight = bgImage.getHeight(this);
-            
-            // Calculate scaling factor to fill entire background (may crop edges)
+
             double scaleX = (double) componentWidth / imageWidth;
             double scaleY = (double) componentHeight / imageHeight;
-            double scale = Math.max(scaleX, scaleY); // Use larger scale to fill entire area
+            double scale = Math.max(scaleX, scaleY);
             
-            // Calculate new dimensions
             int scaledWidth = (int) (imageWidth * scale);
             int scaledHeight = (int) (imageHeight * scale);
             
-            // Center the image
             int x = (componentWidth - scaledWidth) / 2;
             int y = (componentHeight - scaledHeight) / 2;
             
-            // Draw the scaled image
             g2d.drawImage(bgImage, x, y, scaledWidth, scaledHeight, this);
             
         } catch (Exception e) {
@@ -115,6 +108,7 @@ public class FindPets extends JPanel {
         }
     }
 
+    // Abstraction - hides complex UI setup behind simple method name
     private void initializeUI() {
         setLayout(new BorderLayout());
 
@@ -122,12 +116,10 @@ public class FindPets extends JPanel {
         mainContentPanel.setOpaque(false);
         mainContentPanel.setLayout(new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
 
-        // Top Section: Title and Filters
         JPanel topContainerPanel = new JPanel();
         topContainerPanel.setLayout(new BoxLayout(topContainerPanel, BoxLayout.Y_AXIS));
         topContainerPanel.setOpaque(false);
 
-        // Title
         JLabel titleLabel = new JLabel("<html><div style='text-align: center; line-height: 1.1;'>Our<br>Adoptable<br>FurBabies</div></html>");
         titleLabel.setFont(FontUtils.Arial(80f));
         titleLabel.setForeground(Color.decode("#060644"));
@@ -135,30 +127,25 @@ public class FindPets extends JPanel {
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setBorder(new EmptyBorder(12, 50, 20, 50));
 
-        // "Choose a:" text
         JLabel chooseLabel = new JLabel("Choose a:");
         chooseLabel.setFont(FontUtils.Arial(30f));
         chooseLabel.setForeground(Color.BLACK);
         chooseLabel.setHorizontalAlignment(SwingConstants.CENTER);
         chooseLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Filter Panel
         JPanel filterPanel = createFilterPanel();
 
         topContainerPanel.add(titleLabel);
         topContainerPanel.add(chooseLabel);
         topContainerPanel.add(filterPanel);
 
-        // Pet Grid Panel
         petsGridPanel = new JPanel(new GridLayout(0, 3, 50, 50));
         petsGridPanel.setOpaque(false);
         petsGridPanel.setBorder(new EmptyBorder(30, 150, 30, 150));
 
-        // Add both top container and pets grid to main content panel
         mainContentPanel.add(topContainerPanel);
         mainContentPanel.add(petsGridPanel);
 
-        // Create a standard JScrollPane with custom styling
         JScrollPane scrollPane = new JScrollPane(mainContentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -168,29 +155,25 @@ public class FindPets extends JPanel {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().setBlockIncrement(64);
         
-        // Apply custom scrollbar UI
         scrollPane.getVerticalScrollBar().setUI(new CustomScrollBarUI());
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(10, 0));
         
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    // Abstraction - simplifies filter panel creation
     private JPanel createFilterPanel() {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 10)) {
             @Override
             protected void paintComponent(Graphics g) {
-                // Remove the fillRect call to avoid filling with any color
-                // If you want transparency, do not paint anything here
             }
         };
-        filterPanel.setOpaque(false); // Ensure the panel itself is non-opaque
+        filterPanel.setOpaque(false);
         filterPanel.setBorder(new EmptyBorder(0, 10, 30, 10));
         filterPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Type Filter Button
         typeFilterButton = createRoundedFilterPanel("Type");
         typeFilterLabel = (JLabel) typeFilterButton.getComponent(0);
-        // Initialize the label with current filter
         updateTypeFilterLabel();
         typeFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -206,15 +189,12 @@ public class FindPets extends JPanel {
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 typeFilterLabel.setForeground(Color.BLACK);
-                // Don't call updateTypeFilterLabel() here - just reset the color
             }
         });
         filterPanel.add(typeFilterButton);
 
-        // Gender Filter Button
         genderFilterButton = createRoundedFilterPanel("Gender");
         genderFilterLabel = (JLabel) genderFilterButton.getComponent(0);
-        // Initialize the label with current filter
         updateGenderFilterLabel();
         genderFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -230,7 +210,6 @@ public class FindPets extends JPanel {
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 genderFilterLabel.setForeground(Color.BLACK);
-                // Don't call updateGenderFilterLabel() here - just reset the color
             }
         });
         filterPanel.add(genderFilterButton);
@@ -238,6 +217,7 @@ public class FindPets extends JPanel {
         return filterPanel;
     }
     
+    // Abstraction - creates styled button without exposing styling details
     private JPanel createRoundedFilterPanel(String text) {
         JPanel navBox = new JPanel() {
             @Override
@@ -305,6 +285,7 @@ public class FindPets extends JPanel {
         genderFilterLabel.setForeground(Color.BLACK);
     }
 
+    // Abstraction - hides dropdown creation complexity
     private JPopupMenu createDropdownPopup(String[] options, String currentSelection, DropdownSelectionListener listener) {
         JPopupMenu popup = new JPopupMenu();
         popup.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -330,6 +311,7 @@ public class FindPets extends JPanel {
         return popup;
     }
 
+    // Abstraction - defines contract without implementation details
     private interface DropdownSelectionListener {
         void onSelectionChanged(String selectedOption);
     }
@@ -344,10 +326,10 @@ public class FindPets extends JPanel {
         Collections.shuffle(fullPetList);
     }
 
+    // Polymorphism - uses instanceof to check object types at runtime
     private void updatePetDisplay() {
         petsGridPanel.removeAll();
 
-        // Create a temporary list to hold filtered pets
         ArrayList<Pet> filteredPets = new ArrayList<>();
         
         for (Pet pet : fullPetList) {
@@ -363,10 +345,8 @@ public class FindPets extends JPanel {
             }
         }
 
-        // Shuffle just the filtered pets before displaying
         Collections.shuffle(filteredPets);
         
-        // Add the shuffled, filtered pets to the panel
         for (Pet pet : filteredPets) {
             JPanel petCard = createPetCard(pet);
             petsGridPanel.add(petCard);
@@ -380,7 +360,9 @@ public class FindPets extends JPanel {
         return new PetCardPanel(pet);
     }
 
+    // Inheritance - extends JPanel for custom pet card behavior
     private class PetCardPanel extends JPanel {
+        // Encapsulation - private fields control animation state
         private float scale = 1.0f;
         private Timer scaleTimer;
         private final int ANIMATION_STEPS = 5;
@@ -398,7 +380,6 @@ public class FindPets extends JPanel {
             setMinimumSize(new Dimension(250, 350));
             setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-            // Pet Image
             JLabel petImageLabel = new JLabel();
             try {
                 ImageIcon originalIcon = new ImageIcon(getClass().getResource(pet.getImagePath()));
@@ -412,7 +393,6 @@ public class FindPets extends JPanel {
             petImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             petImageLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
-            // Pet Name
             JLabel petNameLabel = new JLabel(pet.getName());
             petNameLabel.setFont(FontUtils.Arial(40f));
             petNameLabel.setForeground(Color.decode("#060644"));
@@ -434,7 +414,7 @@ public class FindPets extends JPanel {
                     isHovered = true;
                     startScaleAnimation(1.05f);
                     petNameLabel.setForeground(Color.decode("#b88917"));
-                    repaint(); // Ensure the panel is repainted
+                    repaint();
                 }
 
                 @Override
@@ -442,11 +422,12 @@ public class FindPets extends JPanel {
                     isHovered = false;
                     startScaleAnimation(1.0f);
                     petNameLabel.setForeground(Color.decode("#060644"));
-                    repaint(); // Ensure the panel is repainted
+                    repaint();
                 }
             });
         }
 
+        // Encapsulation - private method controls animation details
         private void startScaleAnimation(float targetScale) {
             if (scaleTimer != null && scaleTimer.isRunning()) {
                 scaleTimer.stop();
@@ -504,9 +485,8 @@ public class FindPets extends JPanel {
             int width = getWidth();
             int height = getHeight();
 
-            // Set border color to #060644 and change thickness on hover
             g2.setColor(Color.decode("#060644"));
-            g2.setStroke(new BasicStroke(isHovered ? 3 : 1)); // Thicker border on hover
+            g2.setStroke(new BasicStroke(isHovered ? 3 : 1));
             g2.drawRoundRect(0, 0, width - 1, height - 1, arc, arc);
 
             g2.dispose();

@@ -2,23 +2,20 @@ package petadoptionapp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Centralized data management class for all pets in the adoption system.
- * This class handles loading, storing, and providing access to pet data.
- */
+// Encapsulation - Hides data and provides controlled access through methods
 public class PetDataManager {
+    // Encapsulation - Private to prevent direct access from outside
     private static PetDataManager instance;
     private ArrayList<Pet> allPets;
 
-    // Private constructor for singleton pattern
+    // Encapsulation - Private constructor controls object creation
     private PetDataManager() {
         initializePetData();
     }
 
-    // Singleton pattern to ensure only one instance exists
+    // Abstraction - Provides simple interface to get the single instance
     public static PetDataManager getInstance() {
         if (instance == null) {
             instance = new PetDataManager();
@@ -26,21 +23,15 @@ public class PetDataManager {
         return instance;
     }
 
-    /**
-     * Initialize all pet data - add your pets here!
-     */
     private void initializePetData() {
         allPets = new ArrayList<>();
         addDogs();
         addCats();
     }
 
-    /**
-     * Add all dog data here
-     */
     private void addDogs() {
         allPets.addAll(Arrays.asList(
-            // Male Dogs
+            // Inheritance - Dog extends Pet class
             new Dog("Alexis", "Male", 2, 0,
                 "/dog_images/dog_alexis.png",
                 buildPetDescription("Male", "2 years old", "Brown", "Aspin",
@@ -97,7 +88,6 @@ public class PetDataManager {
                     "Not yet", "Anti-rabies, 8-in-1 & Oral Deworm",
                     "Frankie was rescued after being abandoned outside a veterinary clinic, trembling and alone. Despite his epilepsy, he is now receiving the care he needs and continues to show a loving spirit.")),
 
-            // Female Dogs
             new Dog("Alusha", "Female", 2, 0,
                 "/dog_images/dog_alusha.png",
                 buildPetDescription("Female", "2 years old", "Light Brown", "Golden Retriever",
@@ -149,12 +139,9 @@ public class PetDataManager {
         ));
     }
 
-    /**
-     * Add all cat data here
-     */
     private void addCats() {
         allPets.addAll(Arrays.asList(
-            // Male Cats
+            // Inheritance - Cat extends Pet class
             new Cat("Ash", "Male", 2, 0,
                 "/cat_images/cat_ash.png",
                 buildPetDescription("Male", "2 years old", "Blue cat", "British Shorthair",
@@ -211,7 +198,6 @@ public class PetDataManager {
                     "Neutered", "Deworm, 4-in-1, Anti-rabies",
                     "Riley was rescued from an abusive situation that left him paralyzed, and he was adopted by a devoted caregiver who provides him with constant love and support.")),
 
-            // Female Cats
             new Cat("Osang", "Female", 0, 3,
                 "/cat_images/cat_osang.png",
                 buildPetDescription("Female", "3 months old", "Ginger", "Persian Ragdoll",
@@ -263,9 +249,7 @@ public class PetDataManager {
         ));
     }
 
-    /**
-     * Helper method to build consistent pet descriptions
-     */
+    // Abstraction - Hides complex HTML formatting behind simple method
     private String buildPetDescription(String gender, String age, String color, String breed,
             String healthStatus, String spayedNeutered, String vaccinations, String description) {
         return String.format(
@@ -287,12 +271,12 @@ public class PetDataManager {
         );
     }
 
-    // ========== EXISTING METHODS ==========
-
+    // Polymorphism - ArrayList can hold both Dog and Cat objects through Pet interface
     public ArrayList<Pet> getAllPets() {
         return new ArrayList<>(allPets);
     }
 
+    // Polymorphism - Filters using instanceof to check object types at runtime
     public ArrayList<Pet> getDogs() {
         return allPets.stream()
                 .filter(pet -> pet instanceof Dog)
@@ -315,6 +299,7 @@ public class PetDataManager {
         return allPets.remove(pet);
     }
 
+    // Polymorphism - Calls getName() method that works for both Dog and Cat
     public Pet findPetByName(String name) {
         return allPets.stream()
                 .filter(pet -> pet.getName().equalsIgnoreCase(name))
@@ -331,11 +316,7 @@ public class PetDataManager {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // ========== ENHANCED METHODS ==========
-
-    /**
-     * Search pets by multiple criteria
-     */
+    // Abstraction - Provides simple search interface hiding complex filtering logic
     public ArrayList<Pet> searchPets(String name, String gender, String type, Integer minAge, Integer maxAge) {
         return allPets.stream()
                 .filter(pet -> name == null || pet.getName().toLowerCase().contains(name.toLowerCase()))
@@ -346,27 +327,18 @@ public class PetDataManager {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    /**
-     * Get pets with special needs
-     */
     public ArrayList<Pet> getSpecialNeedsPets() {
         return allPets.stream()
                 .filter(pet -> !pet.getDescription().toLowerCase().contains("no health issues"))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    /**
-     * Get pets by breed
-     */
     public ArrayList<Pet> getPetsByBreed(String breed) {
         return allPets.stream()
                 .filter(pet -> pet.getDescription().toLowerCase().contains(breed.toLowerCase()))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    /**
-     * Get pets ready for adoption (vaccinated and spayed/neutered)
-     */
     public ArrayList<Pet> getAdoptionReadyPets() {
         return allPets.stream()
                 .filter(pet -> {
